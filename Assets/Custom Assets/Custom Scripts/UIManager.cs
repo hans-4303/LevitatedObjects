@@ -21,26 +21,28 @@ public class UIManager : MonoBehaviour
         return UIManager.instance;
     }
 
-    public Camera currentCamara;
+    public Camera currentCamera;
 
     private bool isAxisYRotate = false;
 
     public bool IsAxisYRotate
     {
         get { return isAxisYRotate; }
-        set { isAxisYRotate = value; }
+        private set { isAxisYRotate = value; }
     }
 
-    public void OnAxisYButtonClick()
+    public void HandleAxisYButtonClick()
     {
         if(IsAxisYRotate == false)
         {
-            currentCamara.transform.Rotate(0, 180, 0);
+            Quaternion newRotation = currentCamera.transform.rotation * Quaternion.Euler(0, 180, 0);
+            currentCamera.transform.rotation = newRotation;
             IsAxisYRotate = true;
         }
         else
         {
-            currentCamara.transform.Rotate(0, -180, 0);
+            Quaternion newRotation = currentCamera.transform.rotation * Quaternion.Euler(0, -180, 0);
+            currentCamera.transform.rotation = newRotation;
             IsAxisYRotate = false;
         }
     }
@@ -50,22 +52,22 @@ public class UIManager : MonoBehaviour
     public bool IsAxisXRotate
     {
         get { return isAxisXRotate; }
-        set { isAxisXRotate = value; }
+        private set { isAxisXRotate = value; }
     }
 
-    public void OnAxisXButtonClick()
+    public void HandleAxisXButtonClick()
     {
         if(IsAxisXRotate == false)
         {
-            currentCamara.transform.Rotate(90, 0, 0);
+            Quaternion newRotation = currentCamera.transform.rotation * Quaternion.Euler(90, 0, 0);
+            currentCamera.transform.rotation = newRotation;
             IsAxisXRotate = true;
-            Debug.Log("false 쪽 작동");
         }
         else
         {
-            currentCamara.transform.Rotate(-90, 0, 0);
+            Quaternion newRotation = currentCamera.transform.rotation * Quaternion.Euler(-90, 0, 0);
+            currentCamera.transform.rotation = newRotation;
             IsAxisXRotate = false;
-            Debug.Log("true 쪽 작동");
         }
     }
 }
