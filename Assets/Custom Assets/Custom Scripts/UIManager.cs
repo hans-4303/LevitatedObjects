@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
             {
                 GameObject container = new("UIManager");
                 UIManager.instance = container.AddComponent<UIManager>();
+                Object.DontDestroyOnLoad(container);
             }
         }
         return UIManager.instance;
