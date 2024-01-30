@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    private static UIManager instance;
+    public Button axisYButton;
+    public Button axisXButton;
 
+    private static UIManager instance;
     public static UIManager GetInstance()
     {
         if (UIManager.instance == null)
@@ -22,33 +25,23 @@ public class UIManager : MonoBehaviour
         return UIManager.instance;
     }
 
-    public Camera currentCamera;
-
-    private bool isRotating = false;
-
-    public void HandleClickRotate ()
+    private void Awake ()
     {
-        if (!isRotating)
+        CameraManager.GetInstance().OnRotationStatusChanged += UpdateButtonStates;
+    }
+
+    private void OnDestroy ()
+    {
+        if (CameraManager.GetInstance() != null)
         {
-            this.StartCoroutine(RotateOverTime(180f, 1f));
+            CameraManager.GetInstance().OnRotationStatusChanged -= UpdateButtonStates;
         }
     }
 
-    private IEnumerator RotateOverTime(float angle, float duration)
+    private void UpdateButtonStates ()
     {
-        isRotating = true;
-        Quaternion startRotation = currentCamera.transform.rotation;
-        Quaternion endRotation = currentCamera.transform.rotation * Quaternion.Euler(0, angle, 0);
-        float time = 0.0f;
-
-        while (time < duration)
-        {
-            currentCamera.transform.rotation = Quaternion.Slerp(startRotation, endRotation, time / duration);
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        currentCamera.transform.rotation = endRotation;
-        isRotating = false;
+        bool isRotating = CameraManager.GetInstance().IsRotating;
+        axisYButton.enabled = !isRotating;
+        axisXButton.enabled = !isRotating;
     }
 }
