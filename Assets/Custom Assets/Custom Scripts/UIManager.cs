@@ -24,51 +24,31 @@ public class UIManager : MonoBehaviour
 
     public Camera currentCamera;
 
-    private bool isAxisYRotate = false;
+    private bool isRotating = false;
 
-    public bool IsAxisYRotate
+    public void HandleClickRotate ()
     {
-        get { return isAxisYRotate; }
-        private set { isAxisYRotate = value; }
-    }
-
-    public void HandleAxisYButtonClick()
-    {
-        if(IsAxisYRotate == false)
+        if (!isRotating)
         {
-            Quaternion newRotation = currentCamera.transform.rotation * Quaternion.Euler(0, 180, 0);
-            currentCamera.transform.rotation = newRotation;
-            IsAxisYRotate = true;
-        }
-        else
-        {
-            Quaternion newRotation = currentCamera.transform.rotation * Quaternion.Euler(0, -180, 0);
-            currentCamera.transform.rotation = newRotation;
-            IsAxisYRotate = false;
+            this.StartCoroutine(RotateOverTime(180f, 1f));
         }
     }
 
-    private bool isAxisXRotate = false;
-
-    public bool IsAxisXRotate
+    private IEnumerator RotateOverTime(float angle, float duration)
     {
-        get { return isAxisXRotate; }
-        private set { isAxisXRotate = value; }
-    }
+        isRotating = true;
+        Quaternion startRotation = currentCamera.transform.rotation;
+        Quaternion endRotation = currentCamera.transform.rotation * Quaternion.Euler(0, angle, 0);
+        float time = 0.0f;
 
-    public void HandleAxisXButtonClick()
-    {
-        if(IsAxisXRotate == false)
+        while (time < duration)
         {
-            Quaternion newRotation = currentCamera.transform.rotation * Quaternion.Euler(90, 0, 0);
-            currentCamera.transform.rotation = newRotation;
-            IsAxisXRotate = true;
+            currentCamera.transform.rotation = Quaternion.Slerp(startRotation, endRotation, time / duration);
+            time += Time.deltaTime;
+            yield return null;
         }
-        else
-        {
-            Quaternion newRotation = currentCamera.transform.rotation * Quaternion.Euler(-90, 0, 0);
-            currentCamera.transform.rotation = newRotation;
-            IsAxisXRotate = false;
-        }
+
+        currentCamera.transform.rotation = endRotation;
+        isRotating = false;
     }
 }
